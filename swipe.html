@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>MatchQuest - Swipe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        header {
+            background-color: #6a3093;
+            color: white;
+            padding: 10px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px auto;
+            width: 300px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .card img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .buttons button {
+            background-color: #6a3093;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .buttons button:hover {
+            background-color: #4a2063;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Explorez les Profils</h1>
+    </header>
+    <main>
+        <div id="card-container"></div>
+    </main>
+    <script>
+        let profiles = [];
+        let currentIndex = 0;
+
+        async function loadProfiles() {
+            try {
+                const response = await fetch('http://localhost:3000/users');
+                profiles = await response.json();
+                currentIndex = 0;
+                displayProfile();
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Impossible de charger les profils.');
+            }
+        }
+
+        function displayProfile() {
+            const container = document.getElementById('card-container');
+            container.innerHTML = '';
+
+            if (currentIndex >= profiles.length) {
+                container.innerHTML = '<p>Plus de profils disponibles</p>';
+                return;
+            }
+
+            const profile = profiles[currentIndex];
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${profile.photo}" alt="${profile.username}">
+                <h3>${profile.username}, ${profile.age}</h3>
+                <p>Missions : ${profile.missions.join(', ')}</p>
+                <div class="buttons">
+                    <button onclick="swipe('left')">Dislike</button>
+                    <button onclick="swipe('right')">Like</button>
+                </div>
+            `;
+            container.appendChild(card);
+        }
+
+        function swipe(direction) {
+            if (direction === 'right') {
+                // Redirection vers la page Pokémon
+                window.location.href = 'pokemon.html';
+            } else {
+                currentIndex++;
+                displayProfile();
+            }
+        }
+
+        loadProfiles();
+    </script>
+</body>
+</html>

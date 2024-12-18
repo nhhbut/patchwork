@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>MatchQuest - Inscription</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f0fc;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        header {
+            background-color: #6a3093;
+            color: white;
+            padding: 10px;
+        }
+        .mission {
+            display: inline-block;
+            margin: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .mission.selected {
+            background-color: #6a3093;
+            color: white;
+        }
+        button {
+            background-color: #6a3093;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4a2063;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Créer votre compte</h1>
+    </header>
+    <main>
+        <input type="text" id="username" placeholder="Nom"><br><br>
+        <input type="number" id="age" placeholder="Âge"><br><br>
+        <input type="text" id="photo" placeholder="URL Photo"><br><br>
+        <h3>Sélectionnez vos missions SpaceX :</h3>
+        <div id="missions"></div><br>
+        <button onclick="signup()">Créer le compte</button>
+    </main>
+    <script>
+        async function loadMissions() {
+            const response = await fetch('https://api.spacexdata.com/v4/launches');
+            const data = await response.json();
+            const missionsContainer = document.getElementById('missions');
+            data.slice(0, 5).forEach(mission => {
+                const div = document.createElement('div');
+                div.textContent = mission.name;
+                div.className = 'mission';
+                div.onclick = () => div.classList.toggle('selected');
+                missionsContainer.appendChild(div);
+            });
+        }
+
+        async function signup() {
+            const username = document.getElementById('username').value;
+            const age = document.getElementById('age').value;
+            const photo = document.getElementById('photo').value;
+            const missions = Array.from(document.querySelectorAll('.mission.selected')).map(m => m.textContent);
+
+            if (!username || !age || !photo || missions.length === 0) {
+                alert('Veuillez remplir tous les champs.');
+                return;
+            }
+
+            const user = { username, age, photo, missions };
+
+            try {
+                const response = await fetch('http://localhost:3000/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(user),
+                });
+
+                if (response.ok) {
+                    alert('Compte créé avec succès !');
+                    window.location.href = 'swipe.html';
+                } else {
+                    alert('Erreur lors de la création du compte.');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Impossible de créer le compte.');
+            }
+        }
+
+        loadMissions();
+    </script>
+</body>
+</html>

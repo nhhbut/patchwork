@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchQuest - Votre Aventure Commence</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f0fc;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #a044ff;
+            background-image: linear-gradient(315deg, #a044ff 0%, #6a3093 74%);
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        nav {
+            margin-top: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 1rem;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            background-color: #6a3093;
+            background-image: linear-gradient(315deg, #6a3093 0%, #a044ff 74%);
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            margin-top: auto;
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: #fbc2eb;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .mission {
+            padding: 7px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease;
+            margin: 5px;
+        }
+        .mission.selected {
+            background-color: #6a3093;
+            color: white;
+        }
+        .mission:hover {
+            background-color: #e9e9e9;
+        }
+        .card {
+            position: relative;
+            width: 320px;
+            height: 420px;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            text-align: center;
+            overflow: hidden;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .card img {
+            width: 100%;
+            height: 60%;
+            object-fit: cover;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .card h3 {
+            margin: 10px 0;
+            font-size: 1.8rem;
+            color: #6a3093;
+        }
+        .card p {
+            margin: 0 15px;
+            font-size: 1rem;
+            color: #444;
+        }
+        .buttons {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+        }
+        .button {
+            width: 60px;
+            height: 60px;
+            background-color: #ff6b6b;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s ease;
+        }
+        .button.like {
+            background-color: #6a3093;
+        }
+        .button:hover {
+            transform: scale(1.1);
+        }
+        .pokemon-selection {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .pokemon-selection img {
+            width: 90px;
+            height: 90px;
+            cursor: pointer;
+            border-radius: 10px;
+            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s ease;
+        }
+        .pokemon-selection img:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>MatchQuest</h1>
+    <nav>
+        <a href="#signup-container">Accueil</a>
+        <a href="#card-container">Explorer</a>
+        <a href="#match-container">Rencontres</a>
+    </nav>
+</header>
+
+<main>
+    <div id="signup-container">
+        <h1>Créer votre compte</h1>
+        <input type="text" id="username" placeholder="Entrez votre nom">
+        <input type="number" id="age" placeholder="Entrez votre âge" min="18">
+        <input type="text" id="photo" placeholder="Entrez l'URL de votre photo">
+        <h2>Sélectionnez jusqu'à 5 missions SpaceX</h2>
+        <div id="missions"></div>
+        <button id="start-button" onclick="signup()">Commencer à swiper</button>
+    </div>
+
+    <div id="card-container" style="display: none;"></div>
+    <div id="pokemon-container" style="display: none;">
+        <h2>Choisissez un Pokémon</h2>
+        <div class="pokemon-selection" id="pokemon-selection"></div>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2024 MatchQuest. Tous droits réservés.</p>
+    <p><a href="#">Politique de confidentialité</a> | <a href="#">Conditions d'utilisation</a></p>
+</footer>
+
+<script>
+    let profiles = []; // Stocker les profils
+    let currentIndex = 0; // Index du profil en cours
+
+    // Charger les missions SpaceX
+    async function loadMissions() {
+        const response = await fetch('https://api.spacexdata.com/v4/launches');
+        const data = await response.json();
+        const missionsContainer = document.getElementById('missions');
+
+        data.slice(0, 20).forEach(mission => {
+            const missionElement = document.createElement('div');
+            missionElement.className = 'mission';
+            missionElement.textContent = mission.name;
+
+            missionElement.addEventListener('click', () => {
+                if (missionElement.classList.contains('selected')) {
+                    missionElement.classList.remove('selected');
+                } else if (document.querySelectorAll('.mission.selected').length < 5) {
+                    missionElement.classList.add('selected');
+                }
+            });
+
+            missionsContainer.appendChild(missionElement);
+        });
+    }
+
+    // Fonction pour créer une carte
+    function createCard(profile) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <img src="${profile.photo}" alt="${profile.username}">
+            <h3>${profile.username}, ${profile.age}</h3>
+            <p>${profile.missions.join(', ')}</p>
+            <div class="buttons">
+                <button class="button dislike" onclick="swipe('left')">&times;</button>
+                <button class="button like" onclick="swipe('right')">&#10084;</button>
+            </div>
+        `;
+        return card;
+    }
+
+    // Afficher le profil actuel
+    function displayCurrentProfile() {
+        const cardContainer = document.getElementById('card-container');
+        cardContainer.innerHTML = '';
+
+        if (currentIndex < profiles.length) {
+            const card = createCard(profiles[currentIndex]);
+            cardContainer.appendChild(card);
+        } else {
+            cardContainer.innerHTML = '<h2>Aucun profil supplémentaire disponible.</h2>';
+        }
+
+        cardContainer.style.display = 'block';
+    }
+
+    // Charger les Pokémon
+    async function getRandomPokemons() {
+        const randomIds = Array.from({ length: 3 }, () => Math.floor(Math.random() * 150) + 1);
+        const promises = randomIds.map(id => fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(res => res.json()));
+        return Promise.all(promises);
+    }
+
+    function showPokemonSelection() {
+        const cardContainer = document.getElementById('card-container');
+        const pokemonContainer = document.getElementById('pokemon-container');
+        const pokemonSelection = document.getElementById('pokemon-selection');
+
+        cardContainer.style.display = 'none';
+        pokemonContainer.style.display = 'block';
+
+        getRandomPokemons().then(pokemons => {
+            pokemonSelection.innerHTML = '';
+            pokemons.forEach(pokemon => {
+                const img = document.createElement('img');
+                img.src = pokemon.sprites.front_default;
+                img.alt = pokemon.name;
+                img.addEventListener('click', () => {
+                    alert(`Vous avez choisi ${pokemon.name}!`);
+                    pokemonContainer.style.display = 'none';
+                    cardContainer.style.display = 'block';
+                    currentIndex++;
+                    displayCurrentProfile();
+                });
+                pokemonSelection.appendChild(img);
+            });
+        });
+    }
+
+    // Fonction de swipe
+    function swipe(direction) {
+        if (direction === 'right') {
+            showPokemonSelection();
+        } else {
+            currentIndex++;
+            displayCurrentProfile();
+        }
+    }
+
+    // Fonction pour s'inscrire
+    async function signup() {
+        const username = document.getElementById('username').value;
+        const age = document.getElementById('age').value;
+        const photo = document.getElementById('photo').value;
+        const missions = Array.from(document.querySelectorAll('.mission.selected'))
+            .map(mission => mission.textContent);
+
+        if (!username || !age || !photo || missions.length === 0) {
+            alert('Veuillez remplir tous les champs.');
+            return;
+        }
+
+        const newUser = { username, age, photo, missions };
+
+        try {
+            await fetch('http://localhost:3000/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newUser),
+            });
+
+            // Recharger tous les profils après l'inscription
+            loadProfiles();
+            document.getElementById('signup-container').style.display = 'none';
+            document.getElementById('card-container').style.display = 'block';
+        } catch (error) {
+            console.error('Erreur lors de linscription:', error);
+            alert('Une erreur est survenue lors de la création du compte.');
+        }
+    }
+
+    // Charger tous les profils
+    async function loadProfiles() {
+        try {
+            const response = await fetch('http://localhost:3000/users');
+            profiles = await response.json();
+            currentIndex = 0; // Réinitialiser l'index
+            displayCurrentProfile();
+        } catch (error) {
+            console.error('Erreur lors du chargement des profils:', error);
+            alert('Impossible de charger les profils.');
+        }
+    }
+
+    // Charger les missions au démarrage
+    loadMissions();
+    loadProfiles();
+</script>
+
+</body>
+</html>

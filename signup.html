@@ -3,43 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <title>MatchQuest - Inscription</title>
-    <style>
+ <style>
         /* Styles généraux */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
+            background-image: url("image/133207-love-marriage-friendship-sky-interpersonal_relationship-1920x1080.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             margin: 0;
             padding: 0;
+            color: #ffffff; /* Couleur de texte par défaut */
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        input#photo{
+            width: 90%;
+        }
+        input#age{
+            width: 90%;
+        }
+        input#username{
+            width: 90%;
+        }
+
+        /* Header Principal */
+        header {
+             background-color: rgba(30, 30, 30);
+            height: 100px;
+            display: flex;
             align-items: center;
-            height: 100vh;
+            padding: 0 20px;
+
+        }
+
+        header .logo {
+            height: 60px; /* Ajustez la taille selon votre logo */
+            margin-right: 20px;
+        }
+
+        header .app-title {
+            color: #a78bfa; /* Couleur violette claire */
+            font-size: 24px;
+            
+        }
+
+        /* Background Overlay */
+        .background-overlay {
+            position: fixed;
+            top: 100px; /* Aligné avec le header */
+            left: 0;
+            width: 100%;
+            height: 100%; /* 100vh - header - footer */
+            background-color: rgba(0, 0, 0, 0.7); /* Augmentation de l'opacité pour un fond plus sombre */
+            z-index: -1;
         }
 
         /* Container du formulaire */
         .form-container {
-            background-color: #ffffff;
+            background-color: rgba(30, 30, 30, 0.9); /* Fond sombre */
             padding: 30px 40px;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             width: 350px;
+            position: relative;
+            z-index: 1;
+            margin: 60px auto 60px auto; /* Espace sous le header et au-dessus du footer */
         }
 
-        /* En-tête */
-        header {
+        /* En-tête du formulaire */
+        .form-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
             margin-bottom: 20px;
         }
 
-        header .app-name {
-            color: #6a3093;
+        .form-container .app-name {
+            color: #a78bfa; /* Couleur violette claire */
             margin: 0;
             font-size: 28px;
-            font-weight: bold;
+            font-weight: normal; /* Modifié de bold à normal */
         }
 
-        header .form-title {
-            color: #333333;
+        .form-container .form-title {
+            color: #d1d5db; /* Gris clair */
             margin: 5px 0 0 0;
             font-size: 20px;
         }
@@ -53,21 +104,28 @@
         .form-group label {
             display: block;
             margin-bottom: 5px;
-            color: #333333;
-            font-weight: bold;
+            color: #d1d5db; /* Gris clair */
+            font-weight: normal; /* Modifié de bold à normal */
         }
 
         .form-group input {
             width: 100%;
             padding: 10px 12px;
-            border: 1px solid #cccccc;
+            background-color: #3f3f3f; /* Fond sombre pour les champs */
+            border: 1px solid #6b7280; /* Bordure gris foncé */
             border-radius: 5px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            color: #ffffff; /* Texte blanc */
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        .form-group input::placeholder {
+            color: #9ca3af; /* Placeholder gris moyen */
         }
 
         .form-group input:focus {
-            border-color: #6a3093;
+            border-color: #a78bfa; /* Violette claire au focus */
+            background-color: #4b5563; /* Fond légèrement plus clair au focus */
             outline: none;
         }
 
@@ -81,7 +139,7 @@
             max-width: 100%;
             max-height: 150px;
             border-radius: 5px;
-            border: 1px solid #cccccc;
+            border: 1px solid #6b7280;
             display: none; /* Caché par défaut */
         }
 
@@ -90,7 +148,7 @@
         }
 
         .photo-preview .error {
-            color: #ff0000;
+            color: #f87171; /* Rouge clair pour les erreurs */
             font-size: 14px;
             display: none;
         }
@@ -102,7 +160,7 @@
         }
 
         .missions-section h3 {
-            color: #333333;
+            color: #d1d5db; /* Gris clair */
             font-size: 16px;
             margin-bottom: 10px;
         }
@@ -111,45 +169,101 @@
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
+            max-height: 150px; /* Hauteur maximale définie */
+            overflow-y: auto; /* Activation du défilement vertical */
+            padding-right: 10px; /* Espace pour éviter que le contenu ne soit caché derrière la scrollbar */
+            margin-bottom: 30px;
+        }
+
+        /* Styliser la barre de défilement pour les navigateurs WebKit (Chrome, Safari) */
+        .missions::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .missions::-webkit-scrollbar-track {
+            background: #2d2d2d; /* Fond de la track */
+            border-radius: 4px;
+        }
+
+        .missions::-webkit-scrollbar-thumb {
+            background: #a78bfa; /* Couleur de la scrollbar */
+            border-radius: 4px;
+        }
+
+        .missions::-webkit-scrollbar-thumb:hover {
+            background: #c084fc;
         }
 
         .mission {
             flex: 1 1 calc(50% - 10px);
             padding: 8px 10px;
-            border: 1px solid #cccccc;
+            background-color: #3f3f3f; /* Fond sombre pour les missions */
+            border: 1px solid #6b7280; /* Bordure gris foncé */
             border-radius: 5px;
             text-align: center;
             cursor: pointer;
             transition: background-color 0.3s, color 0.3s;
             font-size: 14px;
+            color: #d1d5db; /* Texte gris clair */
         }
 
         .mission.selected {
-            background-color: #6a3093;
-            color: #ffffff;
-            border-color: #6a3093;
+            background-color: #a78bfa; /* Fond violet clair sélectionné */
+            color: #1f2937; /* Texte sombre */
+            border-color: #a78bfa;
         }
 
-        /* Bouton */
         .submit-button {
-            width: 100%;
+            width: 80%;
             padding: 12px;
-            background-color: #6a3093;
-            color: #ffffff;
+            background-color: #a78bfa; /* Bouton violet clair */
+            color: #1f2937; /* Texte sombre */
             border: none;
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s;
+            margin: 0 auto; /* Centre le bouton horizontalement */
+            display: block; /* Assure que le bouton prend tout l'espace disponible */
         }
 
+
         .submit-button:hover {
-            background-color: #4a2063;
+            background-color: #c084fc; /* Bouton violet plus clair au hover */
+        }
+
+        /* Footer */
+        footer {
+             background-color: rgba(30, 30, 30);
+            color: #d1d5db; /* Gris clair pour le texte */
+            text-align: center;
+            padding: 10px 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        footer .social-links {
+            margin-top: 5px;
+        }
+
+        footer .social-links a {
+            color: #a78bfa; /* Couleur violette claire pour les liens */
+            text-decoration: none;
+            margin: 0 5px;
+            transition: color 0.3s;
+        }
+
+        footer .social-links a:hover {
+            color: #c084fc; /* Couleur plus claire au hover */
         }
 
         /* Messages d'alerte */
         .alert {
-            color: #ff0000;
+            color: #f87171; /* Rouge clair */
             margin-bottom: 15px;
             text-align: center;
         }
@@ -159,20 +273,45 @@
             .form-container {
                 width: 90%;
                 padding: 20px;
+                margin-top: 80px; /* Ajustement pour le header */
             }
 
             .mission {
                 flex: 1 1 100%;
             }
+
+            footer {
+                padding: 15px 20px;
+            }
+        }
+
+        /* Styles pour le header du formulaire */
+        .form-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
+    <!-- Header Principal -->
+    <header>
+        <!-- Remplacez "logo.png" par le chemin de votre logo -->
+        <img src="image/logo.svg" alt="Logo MatchQuest" class="logo">
+        <div class="app-title">MatchQuest</div>
+    </header>
+
+    <!-- Background Overlay -->
+    <div class="background-overlay"></div>
+
+    <!-- Container du formulaire -->
     <div class="form-container">
-        <header>
+        <div class="form-header">
             <h1 class="app-name">MatchQuest</h1>
             <h2 class="form-title">Créer votre compte</h2>
-        </header>
+        </div>
         <main>
             <form onsubmit="signup(event)">
                 <div class="form-group">
@@ -199,11 +338,29 @@
             </form>
         </main>
     </div>
+
+    <!-- Footer -->
+    <footer>
+        <div>
+            &copy; 2024 MatchQuest. Tous droits réservés.
+        </div>
+        <div class="social-links">
+            <a href="#" target="_blank">Facebook</a> |
+            <a href="#" target="_blank">Twitter</a> |
+            <a href="#" target="_blank">Instagram</a>
+        </div>
+    </footer>
+
     <script>
         async function loadMissions() {
             try {
+                console.log('Chargement des missions...');
                 const response = await fetch('https://api.spacexdata.com/v4/launches');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
+                console.log('Missions chargées:', data.length);
                 const missionsContainer = document.getElementById('missions');
                 data.slice(0, 10).forEach(mission => { // Augmenté à 10 missions pour plus de choix
                     const div = document.createElement('div');
@@ -212,6 +369,7 @@
                     div.onclick = () => div.classList.toggle('selected');
                     missionsContainer.appendChild(div);
                 });
+                console.log('Missions ajoutées au DOM');
             } catch (error) {
                 console.error('Erreur lors du chargement des missions:', error);
                 const missionsContainer = document.getElementById('missions');

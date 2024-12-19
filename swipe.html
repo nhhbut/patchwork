@@ -1,245 +1,399 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>MatchQuest - Swipe</title>
     <style>
-        /* Header Principal */
-        header {
-            background-color: rgba(30, 30, 30);
-            height: 80px;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-        }
+      /* Header Principal */
+      header {
+        background-color: rgba(30, 30, 30);
+        height: 80px;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+      }
 
-        h2 {
-            color: #ffffff; /* Couleur blanche pour le titre */
-            font-weight: 300;
-        }
+      h2 {
+        color: #ffffff; /* Couleur blanche pour le titre */
+        font-weight: 300;
+      }
 
-        header .logo {
-            height: 60px; /* Ajustez la taille selon votre logo */
-            margin-right: 20px;
-        }
+      header .logo {
+        height: 60px; /* Ajustez la taille selon votre logo */
+        margin-right: 20px;
+      }
 
-        header .app-title {
-            color: #a78bfa; /* Couleur violette claire */
-            font-size: 24px;
-        }
+      header .app-title {
+        color: #a78bfa; /* Couleur violette claire */
+        font-size: 24px;
+      }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #3e3e3e;
-            margin: 0;
-            text-align: center;
-            
-            /* Ajout de Flexbox */
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #3e3e3e;
+        margin: 0;
+        text-align: center;
 
-        main {
-            flex: 1; /* Permet à main de prendre tout l'espace disponible */
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            justify-content: center;
-        }
+        /* Ajout de Flexbox */
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
 
-        .card {
-            padding: 20px;
-            margin: 20px auto;
-            width: 320px;
-            margin-bottom: 40px; /* Réduit la marge inférieure pour laisser de l'espace aux boutons */
-            text-align: center;
-            border-radius: 10px;
-            background-color: rgba(30, 30, 30);
-            color: white; /* Texte en blanc */
-        }
+      main {
+        flex: 1; /* Permet à main de prendre tout l'espace disponible */
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+      }
 
-        .card img {
-            width: 100%;
-            border-radius: 10px;
-        }
+      .card {
+        padding: 20px;
+        margin: 20px auto;
+        width: 320px;
+        margin-bottom: 40px; /* Réduit la marge inférieure pour laisser de l'espace aux boutons */
+        text-align: center;
+        border-radius: 10px;
+        background-color: rgba(30, 30, 30);
+        color: white; /* Texte en blanc */
+      }
 
-        .buttons {
-            display: flex;
-            gap: 40px; /* Réduit l'écart entre les boutons */
-            margin-top: 20px; /* Ajoute un espace au-dessus des boutons */
-            align-items: center;
-            justify-content: center;
-        }
+      .card img {
+        width: 100%;
+        border-radius: 10px;
+      }
 
-        .buttons button {
-            background-color: #a78bfa;
-            color: white;
-            border: none;
-            padding: 15px 30px; /* Augmentation de la taille */
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px; /* Augmentation de la taille de la police */
-            transition: background-color 0.3s, transform 0.2s;
-        }
+      .buttons {
+        display: flex;
+        gap: 40px; /* Réduit l'écart entre les boutons */
+        margin-top: 20px; /* Ajoute un espace au-dessus des boutons */
+        align-items: center;
+        justify-content: center;
+      }
 
-        .buttons button:hover {
-            background-color: #815cef;
-            transform: scale(1.05); /* Effet de zoom au hover */
-        }
+      .buttons button {
+        background-color: #a78bfa;
+        color: white;
+        border: none;
+        padding: 10px 0; /* Ajustement du padding vertical */
+        width: 170px; /* Largeur fixe */
+        height: 70px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 18px; /* Taille de la police */
+        transition: background-color 0.3s, transform 0.2s;
+        box-sizing: border-box; /* Inclure le padding dans la largeur totale */
+      }
 
-        /* Bouton Flottant de Messagerie */
-        .floating-button {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            background-color: #a78bfa;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            padding-top: 6px;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-            z-index: 1000; /* Assure que le bouton reste au-dessus des autres éléments */
-        }
+      .buttons button:hover {
+        background-color: #815cef;
+        transform: scale(1.05); /* Effet de zoom au hover */
+      }
 
-        .floating-button:hover {
-            background-color: #815cef;
-        }
+      /* Bouton Flottant de Messagerie */
+      .floating-button {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background-color: #a78bfa;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        padding-top: 6px;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        z-index: 1000; /* Assure que le bouton reste au-dessus des autres éléments */
+      }
 
-        .floating-button svg {
-            width: 23px;
-            height: 23px;
-            fill: white;
-        }
+      .floating-button:hover {
+        background-color: #815cef;
+      }
 
-        /* Footer */
-        footer {
-            background-color: rgba(30, 30, 30);
-            color: #d1d5db; /* Gris clair pour le texte */
-            text-align: center;
-            padding: 10px 20px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+      .floating-button svg {
+        width: 23px;
+        height: 23px;
+        fill: white;
+      }
 
-        footer .social-links {
-            margin-top: 5px;
-        }
+      /* Footer */
+      footer {
+        background-color: rgba(30, 30, 30);
+        color: #d1d5db; /* Gris clair pour le texte */
+        text-align: center;
+        padding: 10px 20px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
 
-        footer .social-links a {
-            color: #a78bfa; /* Couleur violette claire pour les liens */
-            text-decoration: none;
-            margin: 0 5px;
-            transition: color 0.3s;
-        }
+      footer .social-links {
+        margin-top: 5px;
+      }
 
-        footer .social-links a:hover {
-            color: #c084fc; /* Couleur plus claire au hover */
-        }
+      footer .social-links a {
+        color: #a78bfa; /* Couleur violette claire pour les liens */
+        text-decoration: none;
+        margin: 0 5px;
+        transition: color 0.3s;
+      }
+
+      footer .social-links a:hover {
+        color: #c084fc; /* Couleur plus claire au hover */
+      }
+
+      /* Modal de Sélection de Pokémon */
+      .modal {
+        display: none; /* Caché par défaut */
+        position: fixed;
+        z-index: 1001; /* Au-dessus du bouton flottant */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        padding: 20px;
+        border-radius: 10px;
+        width: 80%;
+        max-width: 500px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .modal-content h2 {
+        margin-top: 0;
+        color: #333;
+      }
+
+      .pokemon-container {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .pokemon-container img {
+        width: 100px;
+        height: 100px;
+        cursor: pointer;
+        border-radius: 50%;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease;
+        margin: 10px;
+      }
+
+      .pokemon-container img:hover {
+        transform: scale(1.2);
+      }
+
+      .close-modal {
+        background-color: #a78bfa;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin-top: 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+      }
+
+      .close-modal:hover {
+        background-color: #815cef;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <!-- Remplacez "logo.png" par le chemin de votre logo -->
-        <img src="image/logo.svg" alt="Logo MatchQuest" class="logo">
-        <div class="app-title">MatchQuest</div>
+      <!-- Remplacez "logo.png" par le chemin de votre logo -->
+      <img src="image/logo.svg" alt="Logo MatchQuest" class="logo" />
+      <div class="app-title">MatchQuest</div>
     </header>
     <main>
-        <h2>Vos futurs prétendant(e)s</h2>
-        <div id="card-container"></div>
-        <!-- Boutons déplacés en dehors de la carte -->
-        <div class="buttons">
-            <button onclick="swipe('left')">Dislike</button>
-            <button onclick="swipe('right')">Like</button>
-        </div>
+      <h2>Vos futurs prétendant(e)s</h2>
+      <div id="card-container"></div>
+      <!-- Boutons déplacés en dehors de la carte -->
+      <div class="buttons">
+        <button onclick="swipe('left')">Dislike</button>
+        <button onclick="swipe('right')">Like</button>
+      </div>
     </main>
     <!-- Footer -->
     <footer>
-        <div>
-            &copy; 2024 MatchQuest. Tous droits réservés.
-        </div>
-        <div class="social-links">
-            <a href="#" target="_blank">Facebook</a> |
-            <a href="#" target="_blank">Twitter</a> |
-            <a href="#" target="_blank">Instagram</a>
-        </div>
+      <div>&copy; 2024 MatchQuest. Tous droits réservés.</div>
+      <div class="social-links">
+        <a href="#" target="_blank">Facebook</a> |
+        <a href="#" target="_blank">Twitter</a> |
+        <a href="#" target="_blank">Instagram</a>
+      </div>
     </footer>
 
     <!-- Bouton Flottant de Messagerie -->
-    <button class="floating-button" onclick="openMessaging()">
-        <!-- Icône de Messagerie en SVG -->
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v16l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-        </svg>
+    <button
+      class="floating-button"
+      onclick="openMessaging()"
+      aria-label="Ouvrir la messagerie"
+    >
+      <!-- Icône de Messagerie en SVG -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path
+          d="M20 2H4c-1.1 0-2 .9-2 2v16l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"
+        />
+      </svg>
     </button>
 
+    <!-- Modal de Sélection de Pokémon -->
+    <div id="pokemon-modal" class="modal">
+      <div class="modal-content">
+        <h2>Choisissez un Pokémon</h2>
+        <div class="pokemon-container" id="pokemon-container"></div>
+        <button class="close-modal" onclick="closePokemonModal()">
+          Fermer
+        </button>
+      </div>
+    </div>
+
     <script>
-        let profiles = [];
-        let currentIndex = 0;
+      let profiles = [];
+      let currentIndex = 0;
 
-        async function loadProfiles() {
-            try {
-                const response = await fetch('http://localhost:3300/users');
-                profiles = await response.json();
-                currentIndex = 0;
-                displayProfile();
-            } catch (error) {
-                console.error('Erreur:', error);
-                alert('Impossible de charger les profils.');
-            }
+      async function loadProfiles() {
+        try {
+          const response = await fetch("http://localhost:3300/users");
+          profiles = await response.json();
+          currentIndex = 0;
+          displayProfile();
+        } catch (error) {
+          console.error("Erreur:", error);
+          alert("Impossible de charger les profils.");
+        }
+      }
+
+      function displayProfile() {
+        const container = document.getElementById("card-container");
+        container.innerHTML = "";
+
+        if (currentIndex >= profiles.length) {
+          container.innerHTML = "<p>Plus de profils disponibles</p>";
+          // Désactiver les boutons si plus de profils
+          document.querySelector(".buttons").style.display = "none";
+          return;
         }
 
-        function displayProfile() {
-            const container = document.getElementById('card-container');
-            container.innerHTML = '';
+        const profile = profiles[currentIndex];
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+            <img src="${profile.photo}" alt="${profile.username}">
+            <h3>${profile.username}, ${profile.age}</h3>
+            <p>Missions : ${profile.missions.join(", ")}</p>
+        `;
+        container.appendChild(card);
+        // Afficher les boutons au cas où ils ont été cachés
+        document.querySelector(".buttons").style.display = "flex";
+      }
 
-            if (currentIndex >= profiles.length) {
-                container.innerHTML = '<p>Plus de profils disponibles</p>';
-                // Désactiver les boutons si plus de profils
-                document.querySelector('.buttons').style.display = 'none';
-                return;
-            }
+      function swipe(direction) {
+        if (direction === "right") {
+          // Ouvrir le modal de sélection de Pokémon
+          openPokemonModal();
+        } else {
+          currentIndex++;
+          displayProfile();
+        }
+      }
 
-            const profile = profiles[currentIndex];
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <img src="${profile.photo}" alt="${profile.username}">
-                <h3>${profile.username}, ${profile.age}</h3>
-                <p>Missions : ${profile.missions.join(', ')}</p>
-            `;
-            container.appendChild(card);
-            // Afficher les boutons au cas où ils ont été cachés
-            document.querySelector('.buttons').style.display = 'flex';
+      // Fonction pour ouvrir la messagerie
+      function openMessaging() {
+        window.location.href = "match.html";
+      }
+
+      // Fonctions pour gérer le modal de sélection de Pokémon
+      function openPokemonModal() {
+        document.getElementById("pokemon-modal").style.display = "flex";
+        loadPokemons();
+      }
+
+      function closePokemonModal() {
+        document.getElementById("pokemon-modal").style.display = "none";
+      }
+
+      async function loadPokemons() {
+        const container = document.getElementById("pokemon-container");
+        container.innerHTML = ""; // Réinitialiser le contenu
+
+        // Générer 3 IDs uniques pour les Pokémon
+        const ids = new Set();
+        while (ids.size < 3) {
+          ids.add(Math.floor(Math.random() * 150) + 1);
         }
 
-        function swipe(direction) {
-            if (direction === 'right') {
-                // Redirection vers la page Pokémon
-                window.location.href = 'pokemon.html';
-            } else {
-                currentIndex++;
-                displayProfile();
-            }
-        }
+        for (const id of ids) {
+          try {
+            const response = await fetch(
+              `https://pokeapi.co/api/v2/pokemon/${id}`
+            );
+            const data = await response.json();
 
-        // Fonction pour ouvrir la messagerie (à personnaliser selon vos besoins)
-        function openMessaging() {
-            // Exemple : redirection vers une page de messagerie
-            window.location.href = 'messagerie.html';
+            const img = document.createElement("img");
+            img.src = data.sprites.front_default;
+            img.alt = data.name;
+            img.title = data.name;
+            img.onclick = () => selectPokemon(data.name); // Correction ici
+            container.appendChild(img);
+          } catch (error) {
+            console.error("Erreur lors du chargement du Pokémon:", error);
+          }
         }
+      }
 
-        loadProfiles();
+      function selectPokemon(pokemonName) {
+        // Récupérer le profil actuel
+        const currentProfile = profiles[currentIndex];
+
+        // Stocker les données du match dans localStorage
+        const matchData = {
+          profile: currentProfile,
+          pokemon: pokemonName,
+        };
+        localStorage.setItem("matchData", JSON.stringify(matchData));
+
+        // Fermer le modal
+        closePokemonModal();
+
+        // Passer au profil suivant
+        currentIndex++;
+        displayProfile();
+
+        // Rediriger vers la messagerie
+        openMessaging();
+      }
+
+      // Fermer le modal si l'utilisateur clique en dehors du contenu
+      window.onclick = function (event) {
+        const modal = document.getElementById("pokemon-modal");
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      };
+
+      // Charger les profils au chargement de la page
+      window.onload = loadProfiles;
     </script>
-</body>
+  </body>
 </html>

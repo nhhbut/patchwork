@@ -60,7 +60,7 @@
 
         async function loadProfiles() {
             try {
-                const response = await fetch('http://localhost:3000/users');
+                const response = await fetch('http://localhost:3300/users');
                 profiles = await response.json();
                 currentIndex = 0;
                 displayProfile();

@@ -4,84 +4,237 @@
     <meta charset="UTF-8">
     <title>MatchQuest - Inscription</title>
     <style>
+        /* Styles généraux */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f0fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
             margin: 0;
-            padding: 20px;
-            text-align: center;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
+
+        /* Container du formulaire */
+        .form-container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 350px;
+        }
+
+        /* En-tête */
         header {
-            background-color: #6a3093;
-            color: white;
-            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
         }
-        .mission {
-            display: inline-block;
-            margin: 5px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            cursor: pointer;
+
+        header .app-name {
+            color: #6a3093;
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        header .form-title {
+            color: #333333;
+            margin: 5px 0 0 0;
+            font-size: 20px;
+        }
+
+        /* Champs du formulaire */
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333333;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cccccc;
             border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
         }
+
+        .form-group input:focus {
+            border-color: #6a3093;
+            outline: none;
+        }
+
+        /* Section prévisualisation photo */
+        .photo-preview {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .photo-preview img {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 5px;
+            border: 1px solid #cccccc;
+            display: none; /* Caché par défaut */
+        }
+
+        .photo-preview img.visible {
+            display: block;
+        }
+
+        .photo-preview .error {
+            color: #ff0000;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* Section missions */
+        .missions-section {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .missions-section h3 {
+            color: #333333;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .missions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .mission {
+            flex: 1 1 calc(50% - 10px);
+            padding: 8px 10px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            font-size: 14px;
+        }
+
         .mission.selected {
             background-color: #6a3093;
-            color: white;
+            color: #ffffff;
+            border-color: #6a3093;
         }
-        button {
+
+        /* Bouton */
+        .submit-button {
+            width: 100%;
+            padding: 12px;
             background-color: #6a3093;
-            color: white;
+            color: #ffffff;
             border: none;
-            padding: 10px 20px;
             border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
-        button:hover {
+
+        .submit-button:hover {
             background-color: #4a2063;
+        }
+
+        /* Messages d'alerte */
+        .alert {
+            color: #ff0000;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            .form-container {
+                width: 90%;
+                padding: 20px;
+            }
+
+            .mission {
+                flex: 1 1 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Créer votre compte</h1>
-    </header>
-    <main>
-        <input type="text" id="username" placeholder="Nom"><br><br>
-        <input type="number" id="age" placeholder="Âge"><br><br>
-        <input type="text" id="photo" placeholder="URL Photo"><br><br>
-        <h3>Sélectionnez vos missions SpaceX :</h3>
-        <div id="missions"></div><br>
-        <button onclick="signup()">Créer le compte</button>
-    </main>
+    <div class="form-container">
+        <header>
+            <h1 class="app-name">MatchQuest</h1>
+            <h2 class="form-title">Créer votre compte</h2>
+        </header>
+        <main>
+            <form onsubmit="signup(event)">
+                <div class="form-group">
+                    <label for="username">Nom</label>
+                    <input type="text" id="username" placeholder="Entrez votre nom" required>
+                </div>
+                <div class="form-group">
+                    <label for="age">Âge</label>
+                    <input type="number" id="age" placeholder="Entrez votre âge" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="photo">URL Photo</label>
+                    <input type="url" id="photo" placeholder="Entrez l'URL de votre photo" required>
+                    <div class="photo-preview">
+                        <img id="photo-preview-img" alt="Prévisualisation de la photo">
+                        <p id="photo-error" class="error">URL invalide ou image non disponible.</p>
+                    </div>
+                </div>
+                <div class="missions-section">
+                    <h3>Sélectionnez vos missions SpaceX :</h3>
+                    <div id="missions" class="missions"></div>
+                </div>
+                <button type="submit" class="submit-button">Créer le compte</button>
+            </form>
+        </main>
+    </div>
     <script>
         async function loadMissions() {
-            const response = await fetch('https://api.spacexdata.com/v4/launches');
-            const data = await response.json();
-            const missionsContainer = document.getElementById('missions');
-            data.slice(0, 5).forEach(mission => {
-                const div = document.createElement('div');
-                div.textContent = mission.name;
-                div.className = 'mission';
-                div.onclick = () => div.classList.toggle('selected');
-                missionsContainer.appendChild(div);
-            });
+            try {
+                const response = await fetch('https://api.spacexdata.com/v4/launches');
+                const data = await response.json();
+                const missionsContainer = document.getElementById('missions');
+                data.slice(0, 10).forEach(mission => { // Augmenté à 10 missions pour plus de choix
+                    const div = document.createElement('div');
+                    div.textContent = mission.name;
+                    div.className = 'mission';
+                    div.onclick = () => div.classList.toggle('selected');
+                    missionsContainer.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Erreur lors du chargement des missions:', error);
+                const missionsContainer = document.getElementById('missions');
+                missionsContainer.innerHTML = '<p>Impossible de charger les missions.</p>';
+            }
         }
 
-        async function signup() {
-            const username = document.getElementById('username').value;
+        async function signup(event) {
+            event.preventDefault(); // Empêche le rechargement de la page
+            const username = document.getElementById('username').value.trim();
             const age = document.getElementById('age').value;
-            const photo = document.getElementById('photo').value;
+            const photo = document.getElementById('photo').value.trim();
             const missions = Array.from(document.querySelectorAll('.mission.selected')).map(m => m.textContent);
 
             if (!username || !age || !photo || missions.length === 0) {
-                alert('Veuillez remplir tous les champs.');
+                alert('Veuillez remplir tous les champs et sélectionner au moins une mission.');
                 return;
             }
 
             const user = { username, age, photo, missions };
 
             try {
-                const response = await fetch('http://localhost:3000/signup', {
+                const response = await fetch('http://localhost:3300/signup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(user),
@@ -91,15 +244,50 @@
                     alert('Compte créé avec succès !');
                     window.location.href = 'swipe.html';
                 } else {
-                    alert('Erreur lors de la création du compte.');
+                    const errorData = await response.json();
+                    alert(`Erreur lors de la création du compte : ${errorData.message || 'Serveur indisponible.'}`);
                 }
             } catch (error) {
                 console.error('Erreur:', error);
-                alert('Impossible de créer le compte.');
+                alert('Impossible de créer le compte. Veuillez réessayer plus tard.');
             }
         }
 
-        loadMissions();
+        function updatePhotoPreview() {
+            const photoInput = document.getElementById('photo');
+            const photoPreviewImg = document.getElementById('photo-preview-img');
+            const photoError = document.getElementById('photo-error');
+            const url = photoInput.value.trim();
+
+            if (url) {
+                photoPreviewImg.src = url;
+                photoPreviewImg.classList.remove('visible');
+                photoError.style.display = 'none';
+
+                // Vérifie si l'image charge correctement
+                photoPreviewImg.onload = () => {
+                    photoPreviewImg.classList.add('visible');
+                    photoError.style.display = 'none';
+                };
+
+                photoPreviewImg.onerror = () => {
+                    photoPreviewImg.classList.remove('visible');
+                    photoError.style.display = 'block';
+                };
+            } else {
+                photoPreviewImg.src = '';
+                photoPreviewImg.classList.remove('visible');
+                photoError.style.display = 'none';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadMissions();
+
+            // Ajout de l'écouteur d'événement pour la prévisualisation de la photo
+            const photoInput = document.getElementById('photo');
+            photoInput.addEventListener('input', updatePhotoPreview);
+        });
     </script>
 </body>
 </html>

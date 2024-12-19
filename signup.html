@@ -32,7 +32,7 @@
         /* Header Principal */
         header {
              background-color: rgba(30, 30, 30);
-            height: 100px;
+            height: 80px;
             display: flex;
             align-items: center;
             padding: 0 20px;
@@ -53,7 +53,7 @@
         /* Background Overlay */
         .background-overlay {
             position: fixed;
-            top: 100px; /* Aligné avec le header */
+            top: 80px; /* Aligné avec le header */
             left: 0;
             width: 100%;
             height: 100%; /* 100vh - header - footer */
@@ -309,7 +309,6 @@
     <!-- Container du formulaire -->
     <div class="form-container">
         <div class="form-header">
-            <h1 class="app-name">MatchQuest</h1>
             <h2 class="form-title">Créer votre compte</h2>
         </div>
         <main>
@@ -399,7 +398,6 @@
                 });
 
                 if (response.ok) {
-                    alert('Compte créé avec succès !');
                     window.location.href = 'swipe.html';
                 } else {
                     const errorData = await response.json();

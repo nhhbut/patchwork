@@ -4,56 +4,185 @@
     <meta charset="UTF-8">
     <title>MatchQuest - Swipe</title>
     <style>
+        /* Header Principal */
+        header {
+            background-color: rgba(30, 30, 30);
+            height: 80px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        h2 {
+            color: #ffffff; /* Couleur blanche pour le titre */
+            font-weight: 300;
+        }
+
+        header .logo {
+            height: 60px; /* Ajustez la taille selon votre logo */
+            margin-right: 20px;
+        }
+
+        header .app-title {
+            color: #a78bfa; /* Couleur violette claire */
+            font-size: 24px;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            background-color: #fff;
+            background-color: #3e3e3e;
             margin: 0;
-            padding: 20px;
             text-align: center;
+            
+            /* Ajout de Flexbox */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-        header {
-            background-color: #6a3093;
-            color: white;
-            padding: 10px;
+
+        main {
+            flex: 1; /* Permet à main de prendre tout l'espace disponible */
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
         }
+
         .card {
-            border: 1px solid #ddd;
             padding: 20px;
             margin: 20px auto;
-            width: 300px;
+            width: 320px;
+            margin-bottom: 40px; /* Réduit la marge inférieure pour laisser de l'espace aux boutons */
             text-align: center;
             border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            background-color: rgba(30, 30, 30);
+            color: white; /* Texte en blanc */
         }
+
         .card img {
             width: 100%;
             border-radius: 10px;
         }
+
         .buttons {
             display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
+            gap: 40px; /* Réduit l'écart entre les boutons */
+            margin-top: 20px; /* Ajoute un espace au-dessus des boutons */
+            align-items: center;
+            justify-content: center;
         }
+
         .buttons button {
-            background-color: #6a3093;
+            background-color: #a78bfa;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 15px 30px; /* Augmentation de la taille */
             border-radius: 5px;
             cursor: pointer;
+            font-size: 18px; /* Augmentation de la taille de la police */
+            transition: background-color 0.3s, transform 0.2s;
         }
+
         .buttons button:hover {
-            background-color: #4a2063;
+            background-color: #815cef;
+            transform: scale(1.05); /* Effet de zoom au hover */
+        }
+
+        /* Bouton Flottant de Messagerie */
+        .floating-button {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background-color: #a78bfa;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding-top: 6px;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            z-index: 1000; /* Assure que le bouton reste au-dessus des autres éléments */
+        }
+
+        .floating-button:hover {
+            background-color: #815cef;
+        }
+
+        .floating-button svg {
+            width: 23px;
+            height: 23px;
+            fill: white;
+        }
+
+        /* Footer */
+        footer {
+            background-color: rgba(30, 30, 30);
+            color: #d1d5db; /* Gris clair pour le texte */
+            text-align: center;
+            padding: 10px 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        footer .social-links {
+            margin-top: 5px;
+        }
+
+        footer .social-links a {
+            color: #a78bfa; /* Couleur violette claire pour les liens */
+            text-decoration: none;
+            margin: 0 5px;
+            transition: color 0.3s;
+        }
+
+        footer .social-links a:hover {
+            color: #c084fc; /* Couleur plus claire au hover */
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Explorez les Profils</h1>
+        <!-- Remplacez "logo.png" par le chemin de votre logo -->
+        <img src="image/logo.svg" alt="Logo MatchQuest" class="logo">
+        <div class="app-title">MatchQuest</div>
     </header>
     <main>
+        <h2>Vos futurs prétendant(e)s</h2>
         <div id="card-container"></div>
+        <!-- Boutons déplacés en dehors de la carte -->
+        <div class="buttons">
+            <button onclick="swipe('left')">Dislike</button>
+            <button onclick="swipe('right')">Like</button>
+        </div>
     </main>
+    <!-- Footer -->
+    <footer>
+        <div>
+            &copy; 2024 MatchQuest. Tous droits réservés.
+        </div>
+        <div class="social-links">
+            <a href="#" target="_blank">Facebook</a> |
+            <a href="#" target="_blank">Twitter</a> |
+            <a href="#" target="_blank">Instagram</a>
+        </div>
+    </footer>
+
+    <!-- Bouton Flottant de Messagerie -->
+    <button class="floating-button" onclick="openMessaging()">
+        <!-- Icône de Messagerie en SVG -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v16l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+        </svg>
+    </button>
+
     <script>
         let profiles = [];
         let currentIndex = 0;
@@ -76,6 +205,8 @@
 
             if (currentIndex >= profiles.length) {
                 container.innerHTML = '<p>Plus de profils disponibles</p>';
+                // Désactiver les boutons si plus de profils
+                document.querySelector('.buttons').style.display = 'none';
                 return;
             }
 
@@ -86,12 +217,10 @@
                 <img src="${profile.photo}" alt="${profile.username}">
                 <h3>${profile.username}, ${profile.age}</h3>
                 <p>Missions : ${profile.missions.join(', ')}</p>
-                <div class="buttons">
-                    <button onclick="swipe('left')">Dislike</button>
-                    <button onclick="swipe('right')">Like</button>
-                </div>
             `;
             container.appendChild(card);
+            // Afficher les boutons au cas où ils ont été cachés
+            document.querySelector('.buttons').style.display = 'flex';
         }
 
         function swipe(direction) {
@@ -102,6 +231,12 @@
                 currentIndex++;
                 displayProfile();
             }
+        }
+
+        // Fonction pour ouvrir la messagerie (à personnaliser selon vos besoins)
+        function openMessaging() {
+            // Exemple : redirection vers une page de messagerie
+            window.location.href = 'messagerie.html';
         }
 
         loadProfiles();

@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>MatchQuest - Swipe</title>
+    <link rel="icon" href="data:,">
     <style>
       /* Header Principal */
       header {
@@ -268,132 +269,146 @@
       </div>
     </div>
 
-    <script>
-      let profiles = [];
-      let currentIndex = 0;
 
-      async function loadProfiles() {
-        try {
-          const response = await fetch("http://localhost:3300/users");
-          profiles = await response.json();
-          currentIndex = 0;
-          displayProfile();
-        } catch (error) {
-          console.error("Erreur:", error);
-          alert("Impossible de charger les profils.");
-        }
-      }
 
-      function displayProfile() {
-        const container = document.getElementById("card-container");
-        container.innerHTML = "";
 
-        if (currentIndex >= profiles.length) {
-          container.innerHTML = "<p>Plus de profils disponibles</p>";
-          // Désactiver les boutons si plus de profils
-          document.querySelector(".buttons").style.display = "none";
-          return;
-        }
 
-        const profile = profiles[currentIndex];
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-            <img src="${profile.photo}" alt="${profile.username}">
-            <h3>${profile.username}, ${profile.age}</h3>
-            <p>Missions : ${profile.missions.join(", ")}</p>
-        `;
-        container.appendChild(card);
-        // Afficher les boutons au cas où ils ont été cachés
-        document.querySelector(".buttons").style.display = "flex";
-      }
 
-      function swipe(direction) {
-        if (direction === "right") {
-          // Ouvrir le modal de sélection de Pokémon
-          openPokemonModal();
-        } else {
-          currentIndex++;
-          displayProfile();
-        }
-      }
+ <script>
+       let profiles = [];
+let currentIndex = 0;
 
-      // Fonction pour ouvrir la messagerie
-      function openMessaging() {
-        window.location.href = "match.html";
-      }
+async function loadProfiles() {
+    try {
+        const response = await fetch("http://localhost:3300/users");
+        profiles = await response.json();
+        currentIndex = 0;
+        displayProfile();
+    } catch (error) {
+        console.error("Erreur:", error);
+        alert("Impossible de charger les profils.");
+    }
+}
 
-      // Fonctions pour gérer le modal de sélection de Pokémon
-      function openPokemonModal() {
-        document.getElementById("pokemon-modal").style.display = "flex";
-        loadPokemons();
-      }
+function displayProfile() {
+    const container = document.getElementById("card-container");
+    container.innerHTML = "";
 
-      function closePokemonModal() {
-        document.getElementById("pokemon-modal").style.display = "none";
-      }
+    if (currentIndex >= profiles.length) {
+        container.innerHTML = "<p>Plus de profils disponibles</p>";
+        document.querySelector(".buttons").style.display = "none";
+        return;
+    }
 
-      async function loadPokemons() {
-        const container = document.getElementById("pokemon-container");
-        container.innerHTML = ""; // Réinitialiser le contenu
+    const profile = profiles[currentIndex];
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+        <img src="${profile.photo}" alt="${profile.username}">
+        <h3>${profile.username}, ${profile.age}</h3>
+        <p>Missions : ${profile.missions.join(", ")}</p>
+    `;
+    container.appendChild(card);
+    document.querySelector(".buttons").style.display = "flex";
+}
 
-        // Générer 3 IDs uniques pour les Pokémon
-        const ids = new Set();
-        while (ids.size < 3) {
-          ids.add(Math.floor(Math.random() * 150) + 1);
-        }
-
-        for (const id of ids) {
-          try {
-            const response = await fetch(
-              `https://pokeapi.co/api/v2/pokemon/${id}`
-            );
-            const data = await response.json();
-
-            const img = document.createElement("img");
-            img.src = data.sprites.front_default;
-            img.alt = data.name;
-            img.title = data.name;
-            img.onclick = () => selectPokemon(data.name); // Correction ici
-            container.appendChild(img);
-          } catch (error) {
-            console.error("Erreur lors du chargement du Pokémon:", error);
-          }
-        }
-      }
-
-      function selectPokemon(pokemonName) {
-        // Récupérer le profil actuel
-        const currentProfile = profiles[currentIndex];
-
-        // Stocker les données du match dans localStorage
-        const matchData = {
-          profile: currentProfile,
-          pokemon: pokemonName,
-        };
-        localStorage.setItem("matchData", JSON.stringify(matchData));
-
-        // Fermer le modal
-        closePokemonModal();
-
-        // Passer au profil suivant
+function swipe(direction) {
+    if (direction === "right") {
+        openPokemonModal(); // Ouvrir le modal de sélection de Pokémon
+    } else {
         currentIndex++;
         displayProfile();
+    }
+}
 
-        // Rediriger vers la messagerie
-        openMessaging();
-      }
+function openPokemonModal() {
+    const modal = document.getElementById("pokemon-modal");
+    modal.style.display = "flex";
+    fetchRandomPokemons(); // Charger des Pokémon aléatoires
+}
 
-      // Fermer le modal si l'utilisateur clique en dehors du contenu
-      window.onclick = function (event) {
-        const modal = document.getElementById("pokemon-modal");
-        if (event.target == modal) {
-          modal.style.display = "none";
+function closePokemonModal() {
+    const modal = document.getElementById("pokemon-modal");
+    modal.style.display = "none";
+}
+
+async function fetchRandomPokemons(count = 4) {
+    const pokemonContainer = document.getElementById("pokemon-container");
+    pokemonContainer.innerHTML = '';
+
+    const promises = [];
+    for (let i = 0; i < count; i++) {
+        const randomId = Math.floor(Math.random() * 898) + 1;
+        promises.push(fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`).then(res => res.json()));
+    }
+
+    try {
+        const pokemons = await Promise.all(promises);
+
+        pokemons.forEach(pokemon => {
+            const img = document.createElement("img");
+            img.src = pokemon.sprites.front_default;
+            img.alt = pokemon.name;
+            img.title = pokemon.name;
+            img.onclick = () => selectPokemon(pokemon.name);
+            img.style.cursor = "pointer";
+
+            pokemonContainer.appendChild(img);
+        });
+    } catch (error) {
+        console.error("Erreur lors du chargement des Pokémon :", error);
+        alert("Impossible de charger les Pokémon. Veuillez réessayer.");
+    }
+}
+
+async function selectPokemon(pokemonName) {
+    const currentProfile = profiles[currentIndex];
+    const matchData = {
+        profile: currentProfile,
+        pokemon: pokemonName,
+    };
+
+    localStorage.setItem("matchData", JSON.stringify(matchData));
+    closePokemonModal();
+    await saveMatch(currentProfile.id);
+    currentIndex++;
+    displayProfile();
+    window.location.href = "dm.html";
+}
+
+async function saveMatch(matchedUserId) {
+    const currentUserId = localStorage.getItem("currentUserId");
+    if (!currentUserId) {
+        alert("Veuillez vous connecter.");
+        window.location.href = "signup.html";
+        return;
+    }
+
+    const matchData = {
+        user_id: parseInt(currentUserId, 10),
+        matched_user_id: matchedUserId,
+    };
+
+    try {
+        const response = await fetch("http://localhost:3300/matches", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(matchData),
+        });
+
+        if (response.ok) {
+            alert(`Vous avez aimé "${profiles[currentIndex].username}" !`);
+        } else {
+            const errorData = await response.json();
+            alert(`Erreur : ${errorData.message || "Serveur indisponible."}`);
         }
-      };
+    } catch (error) {
+        alert("Erreur de connexion au serveur.");
+    }
+}
 
-      // Charger les profils au chargement de la page
-      window.onload = loadProfiles;
+window.onload = loadProfiles;
+
     </script>
   </body>
 </html>

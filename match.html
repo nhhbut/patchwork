@@ -23,10 +23,10 @@
             cursor: pointer;
             border-radius: 10px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
         }
         img:hover {
             transform: scale(1.1);
-            transition: 0.2s ease;
         }
     </style>
 </head>
@@ -39,27 +39,72 @@
     </main>
     <script>
         async function loadMovies() {
-            const response = await fetch('https://api.tvmaze.com/shows');
-            const movies = await response.json();
-            const container = document.getElementById('movie-container');
-            container.innerHTML = ''; // Clear loading text
+            try {
+                console.log('Chargement des films...');
+                const response = await fetch('https://api.tvmaze.com/shows');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const movies = await response.json();
+                const container = document.getElementById('movie-container');
+                container.innerHTML = ''; // Clear loading text
 
-            movies.slice(0, 3).forEach(movie => {
-                const img = document.createElement('img');
-                img.src = movie.image.medium;
-                img.alt = movie.name;
-                img.title = movie.name;
-                img.onclick = () => {
+                movies.slice(0, 3).forEach(movie => {
+                    const img = document.createElement('img');
+                    img.src = movie.image.medium;
+                    img.alt = movie.name;
+                    img.title = movie.name;
+                    img.onclick = () => {
+                        handleMatch(movie);
+                    };
+                    container.appendChild(img);
+                });
+                console.log('Films affichés.');
+            } catch (error) {
+                console.error('Erreur lors du chargement des films:', error);
+                const container = document.getElementById('movie-container');
+                container.innerHTML = '<p>Impossible de charger les films.</p>';
+            }
+        }
+
+        async function handleMatch(movie) {
+            const currentUserId = localStorage.getItem('currentUserId');
+            if (!currentUserId) {
+                alert('Utilisateur non identifié. Veuillez vous inscrire ou vous connecter.');
+                window.location.href = 'signup.html'; // Rediriger vers l'inscription si non connecté
+                return;
+            }
+
+            const matchData = {
+                user_id: parseInt(currentUserId, 10),
+                movie_id: movie.id,
+                movie_name: movie.name,
+                movie_image: movie.image.medium
+            };
+
+            try {
+                const response = await fetch('http://localhost:3300/matches', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(matchData)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
                     alert(`Vous avez choisi "${movie.name}" pour engager la conversation !`);
                     // Redirection vers la page DM avec le film sélectionné
                     window.location.href = `dm.html?film=${encodeURIComponent(movie.name)}`;
-                };
-                container.appendChild(img);
-            });
+                } else {
+                    const errorData = await response.json();
+                    alert(`Erreur lors de l'enregistrement du match : ${errorData.message || 'Serveur indisponible.'}`);
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'enregistrement du match:', error);
+                alert('Impossible d\'enregistrer le match. Veuillez réessayer plus tard.');
+            }
         }
 
-        loadMovies();
+        window.addEventListener('DOMContentLoaded', loadMovies);
     </script>
 </body>
 </html>
-

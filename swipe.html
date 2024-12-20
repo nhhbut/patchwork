@@ -280,8 +280,19 @@ let currentIndex = 0;
 
 async function loadProfiles() {
     try {
+        const currentUserId = localStorage.getItem("currentUserId");
+        if (!currentUserId) {
+            alert("Veuillez vous connecter");
+            window.location.href = "signup.html";
+            return;
+        }
+
         const response = await fetch("http://localhost:3300/users");
-        profiles = await response.json();
+        const allProfiles = await response.json();
+        
+        // Filtrer pour exclure le profil de l'utilisateur connecté
+        profiles = allProfiles.filter(profile => profile.id !== parseInt(currentUserId));
+        
         currentIndex = 0;
         displayProfile();
     } catch (error) {

@@ -233,6 +233,7 @@
         <button onclick="swipe('left')">Dislike</button>
         <button onclick="swipe('right')">Like</button>
       </div>
+      <audio id="like-sound" src="image/HAPPY HAPPY HAPPY  TikTok sound effect.mp3"></audio>
     </main>
     <!-- Footer -->
     <footer>
@@ -398,14 +399,20 @@ async function saveMatch(matchedUserId) {
 
         if (response.ok) {
             alert(`Vous avez aimé "${profiles[currentIndex].username}" !`);
+            playMatchSound();
         } else {
             const errorData = await response.json();
             alert(`Erreur : ${errorData.message || "Serveur indisponible."}`);
         }
     } catch (error) {
-        alert("Erreur de connexion au serveur.");
     }
+    
 }
+function playMatchSound() {
+    const matchSound = document.getElementById("match-sound");
+    matchSound.currentTime = 0; // Remet à zéro pour rejouer rapidement
+    matchSound.play();}
+
 
 window.onload = loadProfiles;
 

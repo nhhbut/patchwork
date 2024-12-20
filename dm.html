@@ -115,6 +115,35 @@
         .send-message button:hover {
             background-color: #815cef;
         }
+
+        .movie-container {
+            position: absolute;
+            bottom: 65px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* Légèrement transparent */
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            width: 320px; /* Largeur de la frame */
+        }
+
+        .movie-container img {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: transform 0.2s;
+        }
+
+        .movie-container img:hover {
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
@@ -125,6 +154,9 @@
         </div>
     </div>
     <div class="messaging-area">
+        <div class="movie-container" id="movie-container">
+            <!-- Les images des films seront injectées ici par JavaScript -->
+        </div>
         <h2 id="conversation-title">Choisissez un match pour commencer à discuter</h2>
         <div class="messages" id="messages-container">
             <!-- Les messages seront injectés ici -->
@@ -137,35 +169,42 @@
 
     <script>
         const currentUserId = localStorage.getItem('currentUserId'); // Assurez-vous que cela est défini
+        let matches = [];
+        let selectedMatch = null;
 
         // Fonction pour charger les matches (utilisateurs matchés) depuis le serveur
-   async function loadMatches() {
-    if (!currentUserId) {
-        alert('Utilisateur non identifié. Veuillez vous inscrire ou vous connecter.');
-        window.location.href = 'signup.html';
-        return;
-    }
+        async function loadMatches() {
+            if (!currentUserId) {
+                alert('Utilisateur non identifié. Veuillez vous inscrire ou vous connecter.');
+                window.location.href = 'signup.html';
+                return;
+            }
 
-    console.log('Chargement des matches pour userId:', currentUserId);
+            console.log('Chargement des matches pour userId:', currentUserId);
 
-    try {
-        const response = await fetch(`http://localhost:3300/matches/${currentUserId}`);
-        console.log('Statut de la réponse:', response.status);
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Réponse erreur:', errorText);
-            throw new Error('Erreur lors de la récupération des matches');
+            try {
+                const response = await fetch(`http://localhost:3300/matches/${currentUserId}`);
+                console.log('Statut de la réponse:', response.status);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Réponse erreur:', errorText);
+                    throw new Error('Erreur lors de la récupération des matches');
+                }
+
+                matches = await response.json();
+                console.log('Matches reçus:', matches);
+                displayMatches(matches);
+
+                // Ouvrir automatiquement la conversation avec le premier match
+                if (matches.length > 0) {
+                    openConversation(matches[0]);
+                }
+            } catch (error) {
+                console.error('Erreur détaillée:', error);
+                alert('Impossible de charger les matches.');
+            }
         }
-        
-        const matches = await response.json();
-        console.log('Matches reçus:', matches);
-        displayMatches(matches);
-    } catch (error) {
-        console.error('Erreur détaillée:', error);
-        alert('Impossible de charger les matches.');
-    }
-}
 
         // Fonction pour afficher les matches (utilisateurs matchés) dans la sidebar
         function displayMatches(matches) {
@@ -190,8 +229,6 @@
                 container.appendChild(matchItem);
             });
         }
-
-        let selectedMatch = null;
 
         async function openConversation(match) {
             selectedMatch = match;
@@ -268,8 +305,59 @@
             }
         }
 
-        // Charger les matches au chargement de la page
-        window.onload = loadMatches;
+        // Fonction pour gérer le clic sur un film
+        async function handleMatch(movie) {
+            if (!selectedMatch) {
+                alert('Veuillez sélectionner un match avant d\'envoyer un message.');
+                return;
+            }
+
+            const messageContent = `Ça te dit qu'on aille voir '${movie.name}' ensemble ?`;
+            const input = document.getElementById('message-input');
+            input.value = messageContent;
+
+            // Envoyer le message
+            await sendMessage();
+
+            // Effacer les suggestions de films
+            const movieContainer = document.getElementById('movie-container');
+            movieContainer.innerHTML = '';
+        }
+
+        // Fonction pour charger les films
+        async function loadMovies() {
+            try {
+                console.log('Chargement des films...');
+                const response = await fetch('https://api.tvmaze.com/shows');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const movies = await response.json();
+                const container = document.getElementById('movie-container');
+                container.innerHTML = ''; // Clear loading text
+                movies.slice(0, 3).forEach(movie => {
+                    const img = document.createElement('img');
+                    img.src = movie.image.medium;
+                    img.alt = movie.name;
+                    img.title = movie.name;
+                    img.onclick = () => {
+                        handleMatch(movie);
+                    };
+                    container.appendChild(img);
+                });
+                console.log('Films affichés.');
+            } catch (error) {
+                console.error('Erreur lors du chargement des films:', error);
+                const container = document.getElementById('movie-container');
+                container.innerHTML = '<p>Impossible de charger les films.</p>';
+            }
+        }
+
+        // Charger les matches et les films au chargement de la page
+        window.onload = () => {
+            loadMatches();
+            loadMovies();
+        };
     </script>
 </body>
 </html>

@@ -295,10 +295,10 @@
         }
     </style>
 </head>
+
 <body>
-    <!-- Header Principal -->
+    <!-- Votre contenu HTML existant -->
     <header>
-        <!-- Remplacez "logo.png" par le chemin de votre logo -->
         <img src="image/logo.svg" alt="Logo MatchQuest" class="logo">
         <div class="app-title">MatchQuest</div>
     </header>
@@ -379,7 +379,7 @@
         async function signup(event) {
             event.preventDefault(); // Empêche le rechargement de la page
             const username = document.getElementById('username').value.trim();
-            const age = document.getElementById('age').value;
+            const age = parseInt(document.getElementById('age').value, 10);
             const photo = document.getElementById('photo').value.trim();
             const missions = Array.from(document.querySelectorAll('.mission.selected')).map(m => m.textContent);
 
@@ -398,7 +398,14 @@
                 });
 
                 if (response.ok) {
-                    window.location.href = 'swipe.html';
+                    const data = await response.json();
+                    if (data.user && data.user.id) {
+                        localStorage.setItem('currentUserId', data.user.id); // Stocker l'ID utilisateur
+                        console.log('Utilisateur inscrit avec ID:', data.user.id);
+                        window.location.href = 'swipe.html';
+                    } else {
+                        alert('Inscription réussie, mais impossible de récupérer les détails de l\'utilisateur.');
+                    }
                 } else {
                     const errorData = await response.json();
                     alert(`Erreur lors de la création du compte : ${errorData.message || 'Serveur indisponible.'}`);
